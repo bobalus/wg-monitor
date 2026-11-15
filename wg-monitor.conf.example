@@ -1,0 +1,6 @@
+# Copy to wg-monitor.conf and restrict its permissions (chmod 600).
+# This file is sourced as Bash; only use trusted configuration files.
+DISCORD_WEBHOOK_URL=""
+declare -A PEER_NAMES=(
+    # ["WIREGUARD_PUBLIC_KEY"]="Device name"
+)

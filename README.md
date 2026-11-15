@@ -8,9 +8,11 @@ Linux, Bash, WireGuard tools (`wg`), `logger`, `awk`, `sort`, `comm`, `curl`, an
 
 ## Configuration and use
 
-1. Optionally edit `PEER_NAMES` in `wg-monitor.sh` to map peer public keys to friendly names.
-2. Optionally supply `DISCORD_WEBHOOK_URL` as an environment variable. Keep the URL secret and out of Git. With no URL, Discord notifications are disabled.
-3. Run `./wg-monitor.sh` to check all interfaces, or `./wg-monitor.sh wg0` to check one interface. Schedule it at your desired interval using a systemd timer or cron. Ensure the service environment contains the webhook variable if Discord notifications are desired.
+1. Copy `wg-monitor.conf.example` to `wg-monitor.conf` alongside the script and run `chmod 600 wg-monitor.conf`.
+2. Edit the configuration to set the optional Discord webhook and map WireGuard public keys to friendly names. Keep this file private and out of Git.
+3. Run `./wg-monitor.sh` to check all interfaces, or `./wg-monitor.sh wg0` to check one interface. Schedule it at your desired interval with a systemd timer or cron. The executing user must be able to read the config and run `wg show`.
+
+The config file is sourced as Bash code: only use a trusted file in a trusted directory. Set `WG_MONITOR_CONFIG` to an alternate absolute path if needed. The default is `wg-monitor.conf` alongside the script. An unreadable or missing config stops the monitor.
 
 The first run initializes state without reporting existing peers as new connections. State is stored under `/run` and is lost on reboot. A peer with no handshake in the last 300 seconds is treated as disconnected. WireGuard is quiet when idle, so this is an inactivity heuristic, not proof the tunnel was disabled. Adjust `INACTIVE_THRESHOLD` as needed.
 

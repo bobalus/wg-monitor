@@ -22,13 +22,18 @@ fi
 INTERFACE="$1"
 STATE_FILE="/run/wg_monitor_state_${INTERFACE}.txt"
 LOG_TAG="wireguard-monitor"
-DISCORD_WEBHOOK_URL="${DISCORD_WEBHOOK_URL:-}" # Optional Discord webhook URL
 INACTIVE_THRESHOLD=300 # Seconds without a handshake before treating a peer as inactive
 # ---------------------
 
-declare -A PEER_NAMES=(
-    # ["WIREGUARD_PUBLIC_KEY"]="Device name"
-)
+# Load local private settings. Override WG_MONITOR_CONFIG if needed.
+CONFIG_FILE="${WG_MONITOR_CONFIG:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/wg-monitor.conf}"
+if [ ! -r "$CONFIG_FILE" ]; then
+    logger -p daemon.err -t "$LOG_TAG" "Cannot read WireGuard monitor config: $CONFIG_FILE"
+    exit 1
+fi
+# This is a Bash configuration file: only source a file you trust.
+source "$CONFIG_FILE"
+: "${DISCORD_WEBHOOK_URL:=}"
 
 peer_name() {
    local pubkey="$1"
