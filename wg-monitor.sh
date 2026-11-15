@@ -31,6 +31,8 @@ if [ ! -r "$CONFIG_FILE" ]; then
     logger -p daemon.err -t "$LOG_TAG" "Cannot read WireGuard monitor config: $CONFIG_FILE"
     exit 1
 fi
+# Declare an empty map so configs may omit peer names entirely.
+declare -A PEER_NAMES=()
 # This is a Bash configuration file: only source a file you trust.
 source "$CONFIG_FILE"
 : "${DISCORD_WEBHOOK_URL:=}"
